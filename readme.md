@@ -5,7 +5,7 @@ A RequireJS plugin for compiling React JSX files. Will use [Babel](https://babel
 # Install
 
 ```sh
-$ bower install https://github.com/JLHwung/requirejs-react-jsx --save
+$ bower install https://github.com/JLHwung/requirejs-react-jsx.git --save
 ```
 
 If you're not using [bower](http://bower.io/search/) to manage your dependencies (you should), you can just download the [jsx.js](jsx.js) file manually.
