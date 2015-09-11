@@ -1,26 +1,19 @@
 # requirejs-react-jsx
 
-[![NPM version](https://badge.fury.io/js/requirejs-react-jsx.svg)](http://badge.fury.io/js/requirejs-react-jsx)
-[![Dependency Status](http://img.shields.io/gemnasium/podio/requirejs-react-jsx.svg?style=flat-square)](https://gemnasium.com/podio/requirejs-react-jsx)
-
-A RequireJS plugin for compiling React JSX files. Will use [react-tools](https://www.npmjs.org/package/react-tools) when compiling using `r.js`, and will use `JSXTransformer` when running in the browser in development. This allows us to support multiple bundles in `r.js` and exclude the `JSXTransformer` from all of them since we're requiring it dynamically and not explicitly. This also means that we can get `1:1` Source Maps in both development and production.
-
-# Example
-
-![http://i.imgur.com/upv8B0g.png](http://i.imgur.com/upv8B0g.png)
+A RequireJS plugin for compiling React JSX files. Will use [Babel](https://babeljs.io/docs/usage/jsx/) when compiling using `r.js`, and will use [Babel/browser](https://babeljs.io/docs/usage/browser/) when running in the browser in development. This allows us to support multiple bundles in `r.js` and exclude the `Babel` from all of them since we're requiring it dynamically and not explicitly.
 
 # Install
 
 ```sh
-$ bower install requirejs-react-jsx --save
+$ bower install https://github.com/JLHwung/requirejs-react-jsx --save
 ```
 
 If you're not using [bower](http://bower.io/search/) to manage your dependencies (you should), you can just download the [jsx.js](jsx.js) file manually.
 
-Since we're also using [react-tools](https://www.npmjs.org/package/react-tools) for the build step while running in a node process, and not in the browser, you will need to install that also:
+Since we're using [Babel](https://babeljs.io/docs/usage/jsx/) for the build step while running in a node process, and not in the browser, you will need to install that also:
 
 ```sh
-$ npm install react-tools --save
+$ npm install babel-core --save
  ```
 
 # Usage
@@ -61,7 +54,7 @@ define(function(require){
 require.config({
   paths: {
     "react": "bower_components/react/react-with-addons",
-    "JSXTransformer": "bower_components/react/JSXTransformer",
+    "BabelBrowser": "node_modules/babel-core/browser",
     "jsx": "bower_components/requirejs-react-jsx/jsx",
     "text": "bower_components/requirejs-text/text"
   },
@@ -70,17 +63,11 @@ require.config({
     "react": {
       "exports": "React"
     },
-    "JSXTransformer": "JSXTransformer"
   },
 
   config: {
     jsx: {
       fileExtension: ".jsx",
-      transformOptions: {
-        harmony: true,
-        stripTypes: false,
-        inlineSourceMap: true
-      },
       usePragma: false
     }
   }
