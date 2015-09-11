@@ -24,7 +24,6 @@
     "tests"
   ],
   "dependencies": {
-    "react": ">=0.11.2",
     "requirejs-text": ">=2.0.12"
   }
 }

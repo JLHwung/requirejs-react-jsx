@@ -9,24 +9,23 @@ define(function () {
      * Reads the .jsx file synchronously and requires react-tools
      * to perform the transform when compiling using r.js
      */
-    ReactTools: function (name, parentRequire, onLoadNative, config) {
+    Babel: function (name, parentRequire, onLoadNative, config) {
       var fs = require.nodeRequire('fs'),
-        ReactTools = require.nodeRequire('react-tools'),
+        Babel = require.nodeRequire('babel-core'),
         compiled = void 0;
 
       var path = parentRequire.toUrl(ensureJSXFileExtension(name, config));
-      var oldOptions = config.jsx && config.jsx.transformOptions || {}; // @deprecated
-      var options = config.config && config.config.jsx && config.config.jsx.transformOptions || oldOptions ||  {
-        harmony: true // enable harmony by default
+      var options = config.config && config.config.jsx && config.config.jsx.transformOptions ||  {
+        whitelist: ['react']
       };
 
       try {
         var content = fs.readFileSync(path, {encoding: 'utf8'});
 
         try {
-          compiled = ReactTools.transform(ensureJSXPragma(content, config), options);
+          compiled = Babel.transform(ensureJSXPragma(content, config), options).code;
         } catch (err) {
-          throw new Error('jsx.js - Error while running JSXTransformer on ' + path + '\n' + err.message);
+          throw new Error('jsx.js - Error while running Babel on ' + path + '\n' + err.message);
         }
 
       } catch (err) {
@@ -41,24 +40,23 @@ define(function () {
     },
 
     /**
-     * Dynamically requires JSXTransformer and the text plugin async
+     * Dynamically requires BabelBrowser and the text plugin async
      * and transforms the JSX in the browser
      */
-    JSXTransformer: function (name, parentRequire, onLoadNative, config) {
+    BabelBrowser: function (name, parentRequire, onLoadNative, config) {
       name = ensureJSXFileExtension(name, config);
 
-      var oldOptions = config.jsx && config.jsx.transformOptions || {}; // @deprecated
-      var options = config.config && config.config.jsx && config.config.jsx.transformOptions || oldOptions ||  {
-        harmony: true // enable harmony by default
+      var options = config.config && config.config.jsx && config.config.jsx.transformOptions ||  {
+        whitelist: ['react']
       };
 
       if (options.inlineSourceMap) {
         options.sourceMap = true;
       }
 
-      var onLoad = function(content, JSXTransformer) {
+      var onLoad = function(content, BabelBrowser) {
         try {
-          var transform = JSXTransformer.transform(ensureJSXPragma(content, config), options);
+          var transform = BabelBrowser.transform(ensureJSXPragma(content, config), options);
 
           content = transform.code;
 
@@ -83,9 +81,9 @@ define(function () {
         onLoadNative.fromText(content);
       };
 
-      parentRequire(['JSXTransformer', 'text'], function (JSXTransformer, text) {
+      parentRequire(['BabelBrowser', 'text'], function (BabelBrowser, text) {
         text.load(name, parentRequire, function (content) {
-          onLoad(content, JSXTransformer);
+          onLoad(content, BabelBrowser);
         }, config);
       });
     }
@@ -117,7 +115,7 @@ define(function () {
     version: '0.1.1',
 
     load: function (name, parentRequire, onLoadNative, config) {
-      var method = isNode ? 'ReactTools' : 'JSXTransformer';
+      var method = isNode ? 'Babel' : 'BabelBrowser';
 
       transform[method].call(this, name, parentRequire, onLoadNative, config);
     },
